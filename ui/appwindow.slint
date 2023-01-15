@@ -1,6 +1,10 @@
 import { Button, VerticalBox } from "std-widgets.slint";
 
+import "../fonts/NotoSansCJK-VF.otf.ttc";
+import "../fonts/NotoEmoji-VariableFont_wght.ttf";
+
 export AppWindow := Window {
+    default-font-family: "Noto Sans";
     property<int> counter: 42;
     callback request-increase-value();
     VerticalBox { 
@@ -8,7 +12,7 @@ export AppWindow := Window {
             text: "Counter: \{counter}";
         }
         Button {
-            text: "Increase value";
+            text: "中文测试，增加数值，emoji测试，😀";
             clicked => { 
                 request-increase-value();
             }
