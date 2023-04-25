@@ -1,21 +1,83 @@
-import { Button, VerticalBox } from "std-widgets.slint";
+import { Button, HorizontalBox,VerticalBox , ListView, StandardListView} from "std-widgets.slint";
 
 import "../fonts/NotoSansCJK-VF.otf.ttc";
 import "../fonts/NotoEmoji-VariableFont_wght.ttf";
 
-export AppWindow := Window {
+export struct SongRef{
+    path:string,
+    name:string
+}
+
+export component  AppWindow inherits Window {
     default-font-family: "Noto Sans";
-    property<int> counter: 42;
-    callback request-increase-value();
-    VerticalBox { 
-        Text {
-            text: "Counter: \{counter}";
-        }
-        Button {
-            text: "中文测试，增加数值，emoji测试，😀";
-            clicked => { 
-                request-increase-value();
+    in-out property <string> path: ".";
+    in-out property <SongRef> current_song: {path:"",name:""};
+    in-out property <[SongRef]> song_list:[];
+    callback select-path();
+    callback delete-song(string);
+    callback play-song(string);
+    callback on-change-song();
+    forward-focus: key-handler;
+    key-handler := FocusScope {
+        key-pressed(event) => {
+            debug(event.text);
+            if(event.text == Key.Delete){
+                debug("delete song:" + current-song.name);
+                delete-song(current-song.path);
+            }
+            if (event.text == Key.UpArrow){
+                //TODO: change to previous song
+            }
+            if(event.text == Key.DownArrow){
+                //TODO: change to next song
+            }
+            if(event.text == " "){
+                //TODO: Play/Pause song playback
+            }
+            accept}
+    }
+
+    VerticalBox {
+        HorizontalBox {
+            alignment: start;
+            height: 40px;
+            Button {
+                text: "选取工作目录";
+                clicked => { 
+                    select-path();
+                }
+            }
+
+            Text {
+                text: "当前目录: \{path}";
+                vertical-alignment: center;
             }
         }
-     }
+
+        HorizontalBox {
+            alignment: start;
+            VerticalBox {
+                ListView {
+                    width: 150px;
+                    for data in song-list:
+                    TouchArea {
+                        width: parent.width;
+                        height: 30px;
+                        Rectangle {
+                            width: parent.width;
+                            height: parent.height;
+                            Text {
+                                text: data.name;
+                            }
+                        }
+
+                        clicked => { 
+                            current-song=data;
+                            on-change-song();
+                         }
+                    }
+                }
+            }
+        }
+    }
 }
